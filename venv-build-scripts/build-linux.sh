@@ -1,24 +1,36 @@
 #!/bin/bash
 set -x
-GRAALPY_VERSION="graal-24.2.2"
-TAR_FILE="graalpy-24.2.2-linux-amd64.tar.gz"
+GRAALPY_VERSION="24.2.2"
+
+GRAALPY_DIR="graalpy-$GRAALPY_VERSION-linux-amd64"
+TAR_FILE="graalpy-$GRAALPY_VERSION-linux-amd64.tar.gz"
 VENV_DIR="linux"
-RESOURCE_DIR=../native/src/main/resources
-wget https://github.com/oracle/graalpython/releases/download/graal-24.2.2/graalpy-24.2.2-linux-amd64.tar.gz
+ZIP_NAME="linux-venv"
+RESOURCE_DIR=../observability-native/src/main/resources
+wget https://github.com/oracle/graalpython/releases/download/graal-$GRAALPY_VERSION/$TAR_FILE
 
 tar -xzf $TAR_FILE
 
-./graalpy-24.2.2-linux-amd64/bin/graalpy -m venv $VENV_DIR
+./$GRAALPY_DIR/bin/graalpy -m venv $VENV_DIR
 
-source ./linux/bin/activate
+source ./$VENV_DIR/bin/activate
 
 echo "Using CC=$CC"
 echo "Using CXX=$CXX"
 
 pip3 install -r requirements.txt
 
-mkdir -p $RESOURCE_DIR/venvs/linux
-# Copy venv directory and resolve symlinks to avoid broken absolute paths
-cp -rL $VENV_DIR $RESOURCE_DIR/venvs/linux/venv
-mkdir -p $RESOURCE_DIR/venvs/linux/std-lib
-cp -r graalpy-24.2.2-linux-amd64/lib/python3.11 $RESOURCE_DIR/venvs/linux/std-lib/python3.11
+# Extract version from gradle.properties and write to venv-metadata.json
+VERSION=$(grep "^version=" ../gradle.properties | cut -d'=' -f2)
+echo "{\"version\": \"$VERSION\"}" > $ZIP_NAME/venv-metadata.json
+
+mkdir -p $ZIP_NAME
+cp -r $VENV_DIR $ZIP_NAME/venv
+rm -rf $ZIP_NAME/venv/bin
+mkdir -p $ZIP_NAME/std-lib
+cp -r $GRAALPY_DIR/lib/python3.11 $ZIP_NAME/std-lib/python3.11
+zip -rq $ZIP_NAME.zip $ZIP_NAME
+mv $ZIP_NAME.zip $RESOURCE_DIR/
+rm -rf $ZIP_NAME
+rm -rf $VENV_DIR
+rm -rf $TAR_FILE $GRAALPY_DIR

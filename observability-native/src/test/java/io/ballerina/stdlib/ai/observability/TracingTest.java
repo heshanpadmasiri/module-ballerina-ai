@@ -37,8 +37,10 @@ import static org.testng.Assert.assertNotNull;
 
 public class TracingTest {
 
+    private static final String PROJECT_NAME = "native-ai-test-" + System.currentTimeMillis();
     private static final String PHOENIX_BASE_URL = "http://localhost:6006";
-    private static final String PHOENIX_SPANS_ENDPOINT = PHOENIX_BASE_URL + "/v1/projects/test/spans?limit=100";
+    private static final String PHOENIX_SPANS_ENDPOINT = PHOENIX_BASE_URL + "/v1/projects/" + PROJECT_NAME
+            + "/spans?limit=100";
     private static final String PHOENIX_HEALTH_ENDPOINT = PHOENIX_BASE_URL + "/healthz";
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
@@ -60,7 +62,7 @@ public class TracingTest {
     }
 
     private void insertTraces() {
-        Observability.initTracing(PHOENIX_BASE_URL + "/v1/traces", "TT");
+        Observability.initTracing(PHOENIX_BASE_URL + "/v1/traces", PROJECT_NAME);
         AgentSpan agentSpan = new AgentSpan("agent");
         agentSpan.init(Observability.TRACER);
         agentSpan.enter();

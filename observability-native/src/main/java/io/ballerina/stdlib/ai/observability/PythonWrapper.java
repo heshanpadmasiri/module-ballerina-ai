@@ -18,8 +18,6 @@
 
 package io.ballerina.stdlib.ai.observability;
 
-import org.graalvm.polyglot.Context;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -28,8 +26,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.graalvm.polyglot.Context;
 
 public class PythonWrapper {
 
@@ -50,11 +52,11 @@ public class PythonWrapper {
         }
 
         public String getSitePackagesPath() {
-            return "venvs/" + name + "/venv/lib/python3.11/site-packages";
+            return this.name + "-venv/venv/lib/python3.11/site-packages";
         }
 
         public String getStdLibPath() {
-            return "venvs/" + name + "/std-lib/python3.11";
+            return this.name + "-venv/std-lib/python3.11";
         }
 
         public static OperatingSystem detect() {
@@ -73,14 +75,46 @@ public class PythonWrapper {
 
         private static final Context CONTEXT = createContext();
 
+        private static final String VENV_METADATA_FILE = "venv-metadata.json";
+
+        private static String version() {
+            try (InputStream inputStream = PythonWrapper.class.getClassLoader()
+                    .getResourceAsStream(VENV_METADATA_FILE)) {
+                if (inputStream == null) {
+                    throw new IOException("Venv metadata file not found in classpath: " + VENV_METADATA_FILE);
+                }
+                String jsonContent = new String(inputStream.readAllBytes());
+
+                // Parse JSON to extract version value
+                Pattern pattern = Pattern.compile("\"version\"\\s*:\\s*\"([^\"]+)\"");
+                Matcher matcher = pattern.matcher(jsonContent);
+                if (matcher.find()) {
+                    return matcher.group(1);
+                } else {
+                    throw new RuntimeException("Version not found in venv metadata file");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read venv metadata file", e);
+            }
+        }
+
+        private static Path getVenvPath() {
+            String version = version();
+            String homeDir = System.getProperty("user.home");
+            return Paths.get(homeDir, ".ballerina", "venv", "ai", version);
+        }
+
         private static Context createContext() {
             try {
                 // Detect operating system
                 OperatingSystem os = OperatingSystem.detect();
 
                 // Create temp directory and copy venv resources
-                Path tempDir = Files.createTempDirectory("ballerina-ai-python");
-                copyVenvResourceToDirectory(tempDir.toString(), os);
+                Path tempDir = getVenvPath();
+                if (!Files.exists(tempDir)) {
+                    Files.createDirectories(tempDir);
+                    copyVenvResourceToDirectory(tempDir.toString(), os);
+                }
 
                 String sitePackagesPath = tempDir.resolve(os.getSitePackagesPath()).toString();
                 String stdLibPath = tempDir.resolve(os.getStdLibPath()).toString();
