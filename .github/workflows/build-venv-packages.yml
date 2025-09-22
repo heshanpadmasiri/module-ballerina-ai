@@ -1,0 +1,149 @@
+name: Build Venv Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (leave empty to use gradle.properties version)'
+        required: false
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build-linux:
+    name: Build Linux Venv Package
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget zip
+
+    - name: Run Linux build script
+      run: |
+        cd venv-build-scripts
+        chmod +x build-linux.sh
+        ./build-linux.sh
+
+    - name: Upload Linux venv package
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-venv-package
+        path: observability-native/src/main/resources/linux-venv.zip
+        retention-days: 30
+
+  build-darwin:
+    name: Build Darwin Venv Package
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install system dependencies
+      run: |
+        brew install wget
+
+    - name: Run Darwin build script
+      run: |
+        cd venv-build-scripts
+        chmod +x build-darwin.sh
+        ./build-darwin.sh
+
+    - name: Upload Darwin venv package
+      uses: actions/upload-artifact@v4
+      with:
+        name: darwin-venv-package
+        path: observability-native/src/main/resources/darwin-venv.zip
+        retention-days: 30
+
+  create-release:
+    name: Create Release with Download Links
+    needs: [build-linux, build-darwin]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download Linux package
+      uses: actions/download-artifact@v4
+      with:
+        name: linux-venv-package
+        path: ./artifacts/linux
+
+    - name: Download Darwin package
+      uses: actions/download-artifact@v4
+      with:
+        name: darwin-venv-package
+        path: ./artifacts/darwin
+
+    - name: Get version from gradle.properties
+      id: get-version
+      run: |
+        VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION"
+
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: venv-packages-${{ steps.get-version.outputs.version }}-${{ github.run_number }}
+        name: Venv Packages ${{ steps.get-version.outputs.version }}
+        body: |
+          ## Venv Packages Build
+
+          This release contains the built venv packages for AI module observability.
+
+          **Build Information:**
+          - Version: ${{ steps.get-version.outputs.version }}
+          - Build Number: ${{ github.run_number }}
+          - Triggered by: ${{ github.actor }}
+          - Commit: ${{ github.sha }}
+
+          **Download Links:**
+          - **Linux Package**: `linux-venv.zip` - Contains Python virtual environment for Linux x86_64
+          - **Darwin Package**: `darwin-venv.zip` - Contains Python virtual environment for macOS ARM64
+
+          **Usage:**
+          These packages are used by the Ballerina AI module for observability features.
+
+        files: |
+          ./artifacts/linux/linux-venv.zip
+          ./artifacts/darwin/darwin-venv.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Output download links
+      run: |
+        echo "## Build Complete! 🎉" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Version:** ${{ steps.get-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Build Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Download Links:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Linux Package**: [linux-venv.zip](https://github.com/${{ github.repository }}/releases/download/venv-packages-${{ steps.get-version.outputs.version }}-${{ github.run_number }}/linux-venv.zip)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Darwin Package**: [darwin-venv.zip](https://github.com/${{ github.repository }}/releases/download/venv-packages-${{ steps.get-version.outputs.version }}-${{ github.run_number }}/darwin-venv.zip)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Release Page:" >> $GITHUB_STEP_SUMMARY
+        echo "Visit the [releases page](https://github.com/${{ github.repository }}/releases/tag/venv-packages-${{ steps.get-version.outputs.version }}-${{ github.run_number }}) to download the packages." >> $GITHUB_STEP_SUMMARY
