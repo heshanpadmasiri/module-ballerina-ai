@@ -18,9 +18,12 @@
 
 package io.ballerina.stdlib.ai.observability;
 
+import org.graalvm.polyglot.Context;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,8 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.graalvm.polyglot.Context;
 
 public class PythonWrapper {
 
@@ -83,7 +84,7 @@ public class PythonWrapper {
                 if (inputStream == null) {
                     throw new IOException("Venv metadata file not found in classpath: " + VENV_METADATA_FILE);
                 }
-                String jsonContent = new String(inputStream.readAllBytes());
+                String jsonContent = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
                 // Parse JSON to extract version value
                 Pattern pattern = Pattern.compile("\"version\"\\s*:\\s*\"([^\"]+)\"");
