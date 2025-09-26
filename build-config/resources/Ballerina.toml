@@ -161,3 +161,113 @@ groupId = "com.zaxxer"
 artifactId = "SparseBitSet"
 version = "@sparseBitSetVersion@"
 path="./lib/SparseBitSet-@sparseBitSetVersion@.jar"
+
+# OpenTelemetry dependencies
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-api"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-api-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-sdk"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-sdk-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-sdk-trace"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-sdk-trace-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-sdk-common"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-sdk-common-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-context"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-context-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-exporter-otlp"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-exporter-otlp-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-exporter-otlp-common"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-exporter-otlp-common-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-exporter-common"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-exporter-common-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-exporter-sender-okhttp"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-exporter-sender-okhttp-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-sdk-extension-autoconfigure-spi"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-sdk-extension-autoconfigure-spi-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-sdk-extension-autoconfigure"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-sdk-extension-autoconfigure-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-sdk-metrics"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-sdk-metrics-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "io.opentelemetry"
+artifactId = "opentelemetry-sdk-logs"
+version = "@opentelemetryVersion@"
+path="./lib/opentelemetry-sdk-logs-@opentelemetryVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "com.squareup.okhttp3"
+artifactId = "okhttp"
+version = "@okhttpVersion@"
+path="./lib/okhttp-@okhttpVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "com.squareup.okio"
+artifactId = "okio-jvm"
+version = "@okioVersion@"
+path="./lib/okio-jvm-@okioVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "org.jetbrains.kotlin"
+artifactId = "kotlin-stdlib"
+version = "@kotlinStdlibVersion@"
+path="./lib/kotlin-stdlib-@kotlinStdlibVersion@.jar"
+
+# OpenInference dependencies
+[[platform.java21.dependency]]
+groupId = "com.arize"
+artifactId = "openinference-semantic-conventions"
+version = "@openinferenceSemanticConventionsVersion@"
+path="./lib/openinference-semantic-conventions-@openinferenceSemanticConventionsVersion@.jar"
+
+[[platform.java21.dependency]]
+groupId = "com.arize"
+artifactId = "openinference-instrumentation"
+version = "@openinferenceInstrumentationVersion@"
+path="./lib/openinference-instrumentation-@openinferenceInstrumentationVersion@.jar"

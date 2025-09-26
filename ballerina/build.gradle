@@ -127,6 +127,65 @@ dependencies {
     externalJars(group: 'com.zaxxer', name: 'SparseBitSet', version: "${project.sparseBitSetVersion}") {
         transitive = false
     }
+
+    // OpenTelemetry dependencies
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-api', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-sdk', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-sdk-trace', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-sdk-common', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-context', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-exporter-otlp', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-exporter-otlp-common', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-exporter-common', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-exporter-sender-okhttp', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-sdk-extension-autoconfigure-spi', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-sdk-extension-autoconfigure', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-sdk-metrics', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-sdk-logs', version: "${project.opentelemetryVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'com.squareup.okhttp3', name: 'okhttp', version: "${project.okhttpVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'com.squareup.okio', name: 'okio-jvm', version: "${project.okioVersion}") {
+        transitive = false
+    }
+    // Kotlin stdlib required by OkHttp (OkHttp 4.x is written in Kotlin)
+    externalJars(group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: "${project.kotlinStdlibVersion}") {
+        transitive = false
+    }
+
+    // OpenInference dependencies
+    externalJars(group: 'com.arize', name: 'openinference-semantic-conventions', version: "${project.openinferenceSemanticConventionsVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'com.arize', name: 'openinference-instrumentation', version: "${project.openinferenceInstrumentationVersion}") {
+        transitive = false
+    }
 }
 
 task updateTomlFiles {
@@ -146,6 +205,12 @@ task updateTomlFiles {
         newConfig = newConfig.replace("@log4jVersion@", project.log4jVersion)
         newConfig = newConfig.replace("@xmlbeansVersion@", project.xmlbeansVersion)
         newConfig = newConfig.replace("@sparseBitSetVersion@", project.sparseBitSetVersion)
+        newConfig = newConfig.replace("@opentelemetryVersion@", project.opentelemetryVersion)
+        newConfig = newConfig.replace("@openinferenceSemanticConventionsVersion@", project.openinferenceSemanticConventionsVersion)
+        newConfig = newConfig.replace("@openinferenceInstrumentationVersion@", project.openinferenceInstrumentationVersion)
+        newConfig = newConfig.replace("@okhttpVersion@", project.okhttpVersion)
+        newConfig = newConfig.replace("@okioVersion@", project.okioVersion)
+        newConfig = newConfig.replace("@kotlinStdlibVersion@", project.kotlinStdlibVersion)
         ballerinaTomlFile.text = newConfig
 
         def ballerinaToOpenApiVersion = project.ballerinaToOpenApiVersion
