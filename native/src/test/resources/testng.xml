@@ -5,5 +5,8 @@
         <classes>
             <class name="io.ballerina.stdlib.ai.MarkdownChunkerIntegrationTest"/>
         </classes>
+        <classes>
+            <class name="io.ballerina.stdlib.ai.observability.TracingTest"/>
+        </classes>
     </test>
 </suite>

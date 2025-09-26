@@ -26,5 +26,12 @@ module io.ballerina.stdlib.ai {
     requires org.apache.tika.parser.pdf;
     requires java.xml;
     requires org.apache.tika.parser.microsoft;
+    requires io.opentelemetry.api;
+    requires io.opentelemetry.exporter.otlp;
+    requires io.opentelemetry.sdk.common;
+    requires io.opentelemetry.sdk.trace;
+    requires io.opentelemetry.sdk;
+    requires openinference.instrumentation;
+
     exports io.ballerina.stdlib.ai;
 }
